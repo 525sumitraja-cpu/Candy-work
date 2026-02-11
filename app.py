@@ -181,3 +181,88 @@ st.dataframe(margin_risk[[
     "Product Name","Sales","Gross Profit","Margin %"
 ]])
 
+# =========================
+# COST vs SALES SCATTER
+# =========================
+st.header("Cost vs Sales Analysis")
+
+fig = px.scatter(
+    filtered,
+    x="Sales",
+    y="Cost",
+    size="Gross Profit",
+    color="Margin %",
+    hover_name="Product Name",
+    title="Cost vs Sales Scatter"
+)
+st.plotly_chart(fig, use_container_width=True)
+
+# =========================
+# COST HEAVY + LOW MARGIN
+# =========================
+st.subheader("Cost-Heavy & Margin-Poor Products")
+
+cost_heavy = filtered[
+    (filtered["Cost"] > filtered["Sales"] * 0.8) &
+    (filtered["Margin %"] < 0.2)
+]
+
+st.dataframe(cost_heavy[[
+    "Product Name","Sales","Cost","Margin %"
+]])
+
+# =========================
+# PRICING INEFFICIENCY
+# =========================
+st.subheader("Pricing Inefficiency")
+
+pricing_issue = filtered[
+    (filtered["Margin %"] < 0.1) &
+    (filtered["Sales"] > filtered["Sales"].median())
+]
+
+st.dataframe(pricing_issue[[
+    "Product Name","Sales","Gross Profit","Margin %"
+]])
+
+# =========================
+# REPRICING NEEDED
+# =========================
+st.subheader("Repricing Candidates")
+
+repricing = filtered[
+    (filtered["Margin %"] < 0.15) &
+    (filtered["Sales"] > filtered["Sales"].median())
+]
+
+st.dataframe(repricing[[
+    "Product Name","Sales","Margin %"
+]])
+
+# =========================
+# COST NEGOTIATION
+# =========================
+st.subheader("Cost Renegotiation Needed")
+
+renegotiate = filtered[
+    (filtered["Cost"] > filtered["Sales"] * 0.7) &
+    (filtered["Gross Profit"] > 0)
+]
+
+st.dataframe(renegotiate[[
+    "Product Name","Cost","Sales","Margin %"
+]])
+
+# =========================
+# DISCONTINUE PRODUCTS
+# =========================
+st.subheader("Discontinuation Candidates")
+
+discontinue = filtered[
+    (filtered["Sales"] < filtered["Sales"].median()) &
+    (filtered["Margin %"] < 0.1)
+]
+
+st.dataframe(discontinue[[
+    "Product Name","Sales","Margin %"
+]])
