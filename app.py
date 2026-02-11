@@ -112,3 +112,72 @@ if product_search:
 
 # Margin
 filtered = filtered[filtered["Margin %"] >= margin_filter]
+
+# =========================
+# PARETO – REVENUE
+# =========================
+st.header("80% Revenue Contributors")
+
+rev = filtered.groupby("Product Name")["Sales"].sum().sort_values(ascending=False)
+rev_cum = rev.cumsum()/rev.sum()
+
+rev_df = rev_cum.reset_index()
+rev_df.columns = ["Product Name","Cumulative Revenue %"]
+
+top_rev = rev_df[rev_df["Cumulative Revenue %"] <= 0.8]
+
+st.write("Products contributing to 80% Revenue")
+st.dataframe(top_rev)
+
+# =========================
+# PARETO – PROFIT
+# =========================
+st.header("80% Profit Contributors")
+
+profit = filtered.groupby("Product Name")["Gross Profit"].sum().sort_values(ascending=False)
+profit_cum = profit.cumsum()/profit.sum()
+
+profit_df = profit_cum.reset_index()
+profit_df.columns = ["Product Name","Cumulative Profit %"]
+
+top_profit = profit_df[profit_df["Cumulative Profit %"] <= 0.8]
+
+st.write("Products contributing to 80% Profit")
+st.dataframe(top_profit)
+
+# =========================
+# DEPENDENCY RISK
+# =========================
+st.header("Over-Dependency Risk (Product)")
+
+dependency = filtered.groupby("Product Name")["Sales"].sum()/filtered["Sales"].sum()
+risk_products = dependency[dependency > 0.10]
+
+st.write("Products contributing >10% of total revenue")
+st.dataframe(risk_products)
+
+# =========================
+# REGION DEPENDENCY
+# =========================
+st.header("Region Dependency Risk")
+
+region_dep = filtered.groupby("Region")["Sales"].sum()/filtered["Sales"].sum()
+region_risk = region_dep[region_dep > 0.25]
+
+st.write("Regions contributing >25% revenue")
+st.dataframe(region_risk)
+
+# =========================
+# MARGIN RISK PRODUCTS
+# =========================
+st.header("Margin Risk Products")
+
+margin_risk = filtered[
+    (filtered["Margin %"] < 0.15) &
+    (filtered["Sales"] > filtered["Sales"].median())
+]
+
+st.dataframe(margin_risk[[
+    "Product Name","Sales","Gross Profit","Margin %"
+]])
+
