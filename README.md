@@ -36,7 +36,7 @@ c2.metric("Total Profit", int(filtered["Gross Profit"].sum()))
 c3.metric("Avg Margin", round(filtered["Margin %"].mean(),2))
 
 # =============================
-# PRODUCT RANKING
+# PRODUCT RANKINGV
 # =============================
 st.header("Product Ranking")
 
